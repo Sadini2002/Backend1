@@ -1,3 +1,5 @@
+//mongodb+srv://jasingha2002sadininipunika_db_user:<db_password>@cluster0.rtl1zya.mongodb.net/
+//mongodb+srv://jasingha2002sadininipunika_db_user:<db_password>@cluster0.jtgosyu.mongodb.net/
 const express = require('express');
 const mongoose = require('mongoose');
 const router = require('./Route/User_route'); 
