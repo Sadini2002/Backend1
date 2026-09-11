@@ -1,32 +1,45 @@
-//mongodb+srv://jasingha2002sadininipunika_db_user:<db_password>@cluster0.rtl1zya.mongodb.net/
-//mongodb+srv://jasingha2002sadininipunika_db_user:<db_password>@cluster0.jtgosyu.mongodb.net/
 const express = require('express');
 const mongoose = require('mongoose');
-const router = require('./Route/User_route'); 
 
-
+const User_route = require('./Route/User_route');
+const Part_route = require('./Route/Part_route');
 
 const app = express();
+
+// Middleware
 app.use(express.json());
 
-
- const User_route = require('./Route/User_route');
- app.use("/users", User_route);
-
-
-
-
-app.use("users",(req,res, next)=>{
-    res.send("Hello from Backend");
+// CORS headers support
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  if (req.method === 'OPTIONS') {
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH');
+    return res.status(200).json({});
+  }
+  next();
 });
 
-mongoose.connect('mongodb://localhost:27017', )
+// Routes
+app.use('/users', User_route);
+app.use('/parts', Part_route);
+
+// Root route check
+app.get('/', (req, res) => {
+  res.status(200).send('Vehicle & Technical Parts API Backend is running');
+});
+
+// MongoDB Connection
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/tech_store';
+const PORT = process.env.PORT || 3000;
+
+mongoose.connect(MONGO_URI)
   .then(() => {
     console.log('Connected to MongoDB');
-    app.listen(3000, () => {
-      console.log('Server is running on port 3000');
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
     });
   })
   .catch(err => {
-    console.error('Failed to connect to MongoDB', err);
-  });
+    console.error('Failed to connect to MongoDB:', err);
+  });
