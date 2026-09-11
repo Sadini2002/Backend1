@@ -41,11 +41,7 @@ app.use("/users", User_route);
 
 
 
-app.get("/", (req, res) => {
-  res.status(200).send(
-    "Vehicle & Technical Parts API Backend is running"
-  );
-});
+
 
 
 
@@ -56,7 +52,7 @@ const PORT = process.env.PORT || 3000;
 
 
 mongoose
-  .connect(MONGO_URI)
+  .connect(process.env.MONGO_URI)
   .then(() => {
 
     console.log("Connected to MongoDB");
