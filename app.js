@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 
 import User_route from "./Route/userRouter.js";
 import TechPartItem_route from "./Route/techPartItemRouter.js";
-
+import orderRouter from "./Route/orderRouter.js";
 const app = express();
 
 
@@ -39,7 +39,7 @@ app.use((req, res, next) => {
 app.use("/users", User_route);
 app.use("/techPartItems", TechPartItem_route);
 
-
+app.use("/orders", orderRouter);
 
 
 
