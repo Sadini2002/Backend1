@@ -1,111 +1,85 @@
 const User_model = require("../Model/User_model");
 
-const getAllUsers = async (req, res,next) => {
-    let users;
+// Get all users
+const getAllUsers = async (req, res, next) => {
   try {
-    users = await users.find();
-  } catch (error) {
-    console.log("error");
-  }
-
-// not found users
-if (!users) {
-    return res.status(404).json({ message: "No users found" });
-  } else {
+    const users = await User_model.find();
+    if (!users || users.length === 0) {
+      return res.status(404).json({ message: "No users found" });
+    }
     return res.status(200).json({ users });
-  };
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
 };
 
-// insert user
-  const addUsers = async (req , res, next)=>{
-    const { name, email, age}=req.body;
+// Add new user
+const addUsers = async (req, res, next) => {
+  const { name, email, age } = req.body;
+  try {
+    const user = new User_model({ name, email, age });
+    await user.save();
+    return res.status(201).json({ user });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Unable to add user" });
+  }
+};
 
-    let Users
-
-    try{
-        Users = new Users ({name,email,age});
-        await Users.save();
-    } catch (err){
-        console.log(err); 
+// Get user by ID
+const getById = async (req, res, next) => {
+  const id = req.params.id;
+  try {
+    const user = await User_model.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
     }
+    return res.status(200).json({ user });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
 
-    // not insert  users
-    if (!Users){
-        return res.status(404).json({message:"Unble to add users"});
+// Update user details
+const updateUser = async (req, res, next) => {
+  const id = req.params.id;
+  const { name, email, age } = req.body;
 
+  try {
+    const user = await User_model.findByIdAndUpdate(
+      id,
+      { name, email, age },
+      { new: true, runValidators: true }
+    );
+    if (!user) {
+      return res.status(404).json({ message: "Unable to update user details. User not found." });
     }
-    return res.status(200).json({Users});
- } ;
+    return res.status(200).json({ user });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Error updating user" });
+  }
+};
 
-
- //get by id
-const getById = async(req,res, next)=>{
-    const id = req.params.id;
-     let user; // variable
-     
-     try{
-
-        user= await user.findById(id);
-
-     } catch(err){
-        console.log(err);
-     }
-
-     if (!user){
-        return res.status(404).json({message:"User not found"});
-
+// Delete user
+const deleteUser = async (req, res, next) => {
+  const id = req.params.id;
+  try {
+    const user = await User_model.findByIdAndDelete(id);
+    if (!user) {
+      return res.status(404).json({ message: "Unable to delete user. User not found." });
     }
-    return res.status(200).json({user});
- } ;
- //update user details
- const updateUser = async(req , res, next)=>{
-    const id = req.params.id;
-    const { name, email, age}=req.body;
+    return res.status(200).json({ message: "User deleted successfully", user });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Error deleting user" });
+  }
+};
 
-    let users;
-    try {
-        users =  await users.findByIdAndUpdate(id, 
-            { name:name ,email:email ,age:age})
-            users = await users.save();
-
-    }catch(err){
-        console.log(err);
-    }
-
-    if (!users){
-        return res.status(404).json({message:"unable to update user Details"});
-
-     }
-        return res.status(200).json({users});
-
-
- };
-
- //delect users
- const delectUser = async(req, res, next)=>{
-    const id = req.params.id;
-    let user;
-    try{
-          user= await user.findByIdAndDelete(id)
-    }catch(err){
-        console.log(err);
-    }
-    
-    if (!user){
-        return res.status(404).json({message:"unable to delect user Details"});
-
-     }
-        return res.status(200).json({user});
-
- };
-
-
-
-
-
-   
-exports.getAllUsers=getAllUsers;
-exports.addUser=addUsers;
-exports.getById=getById;
-exports.updateUser=updateUser;
-exports.delectUser=delectUser;
+exports.getAllUsers = getAllUsers;
+exports.addUser = addUsers;
+exports.getById = getById;
+exports.updateUser = updateUser;
+exports.deleteUser = deleteUser;
