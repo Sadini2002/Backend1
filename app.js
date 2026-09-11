@@ -2,7 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 
 import User_route from "./Route/userRouter.js";
-import Part_route from "./Route/Part_route.js";
+
 
 const app = express();
 
@@ -37,7 +37,7 @@ app.use((req, res, next) => {
 
 
 app.use("/users", User_route);
-app.use("/parts", Part_route);
+
 
 
 
@@ -50,8 +50,7 @@ app.get("/", (req, res) => {
 
 
 const MONGO_URI =
-  process.env.MONGO_URI ||
-  "mongodb://127.0.0.1:27017/tech_store";
+  process.env.MONGO_URI ;
 
 const PORT = process.env.PORT || 3000;
 
