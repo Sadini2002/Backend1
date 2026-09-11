@@ -8,4 +8,4 @@ router.post('/', Part_Control.addPart);
 router.put('/:id', Part_Control.updatePart);
 router.delete('/:id', Part_Control.deletePart);
 
-module.exports = router;
+
