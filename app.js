@@ -36,10 +36,10 @@ app.use((req, res, next) => {
 
 
 
-app.use("/users", User_route);
-app.use("/techPartItems", TechPartItem_route);
+app.use("/api/users", User_route);
+app.use("/api/techPartItems", TechPartItem_route);
 
-app.use("/orders", orderRouter);
+app.use("/api/orders", orderRouter);
 
 
 
