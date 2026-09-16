@@ -8,7 +8,7 @@ import { OAuth2Client } from 'google-auth-library';
 import nodemailer from 'nodemailer';
 
 // Create User
-export function createUser(req, res) {
+/*export function createUser(req, res) {
   try {
     // Only admins can create another admin
     if (req.body.role === "admin") {
@@ -41,7 +41,72 @@ export function createUser(req, res) {
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
-}
+}*/
+
+
+
+export const createUser = async (req, res) => {
+  try {
+    const { email, firstname, lastname, password, role, isBlock, img } = req.body;
+
+
+
+    // Check existing user
+    const existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+      return res.status(400).json({
+        message: "Email already exists",
+      });
+    }
+
+    // Only admins can create another admin
+    if (req.body.role === "admin") {
+      if (!req.user || req.user.role !== "admin") {
+        return res.status(403).json({ message: "Only admin can create another admin user" });
+      }
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create user
+    const newUser = new User({
+      email: email,
+      firstname: firstname,
+      lastname: lastname,
+      password: hashedPassword,
+      role: role || "user",
+      isBlock: isBlock || false,
+      img: img || "",
+    });
+
+    await newUser.save();
+
+    res.status(201).json({
+      message: "User registered successfully",
+      user: {
+        id: newUser._id,
+        email: newUser.email,
+        firstname: newUser.firstname,
+        lastname: newUser.lastname,
+        role: newUser.role,
+        isBlock: newUser.isBlock,
+        img: newUser.img,
+      },
+    });
+  } catch (error) {
+    console.error("Register error:", error);
+
+    res.status(500).json({
+      message: "Registration failed",
+      error: error.message,
+    });
+  }
+};
+
+
+
 
 // Login User
 export function loginUser(req, res) {
